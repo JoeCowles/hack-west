@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import dns.resolver
+from bson import ObjectId
 
 load_dotenv()
 
@@ -47,7 +48,8 @@ def mkSyllabusdb(topic: str, description: str, user_id):
         "description": description
     }
     syb = collection.insert_one(data)
-    return syb["_id"], {"status": "good"}
+    sybId = str(syb.inserted_id)
+    return sybId, {"status": "good"}
 def mkLecturedb(description: str, video_id: str, syllabus_id):
     collection = Db.lecture
     data = {
@@ -56,14 +58,16 @@ def mkLecturedb(description: str, video_id: str, syllabus_id):
         "video_id": video_id
     }
     lecture = collection.insert_one(data)
-    return lecture["_id"], {"status": "good"}
+    lectureId = str(lecture.inserted_id)
+    return lectureId, {"status": "good"}
 def mkQuizdb(lecture_id: str):
     collection = Db.quiz
     data = {
         "foreign_key": lecture_id
     }
     quiz = collection.insert_one(data)
-    return quiz["_id"], {"status": "good"}
+    quizId = str(quiz.inserted_id)
+    return quizId, {"status": "good"}
 def mkQuestionb(quiz_id: str, questions: str, answers):
     collection = Db.questions
     data = {
@@ -72,7 +76,8 @@ def mkQuestionb(quiz_id: str, questions: str, answers):
         "answers": answers
     }
     question = collection.insert_one(data)
-    return question["_id"], {"status": "good"}
+    questionId = str(question.inserted_id)
+    return questionId, {"status": "good"}
 
 #get entire file
 def check_hashdb(pass_hash: str):
@@ -110,4 +115,5 @@ def getQuestionTXT(clusterFile):
     return clusterFile["Questions"]
 
 
-
+# connection_string = "mongodb+srv://<username>:<password>@cluster0.mongodb.net/test?retryWrites=true&w=majority"
+# api_key = "<your_api_key>"

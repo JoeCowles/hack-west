@@ -7,7 +7,6 @@ from .gen_syllabus import create_syllabus
 from fastapi import Depends
 import json
 from fastapi.middleware.cors import CORSMiddleware
-from . import gen_syllabus
 from . import yt_api
 
 DEFAULT_LANG = 'en-us'
@@ -98,10 +97,10 @@ def get_courses(user_id=Depends(check_hash)):
 
 @app.get("/")
 def health_check():
-    query = 'taylor series'
-    video_id=yt_api.get_video_id(query)
-    transcript = yt_api.get_transcript(video_id)
-    return {"status": "ok", "query": query, "video id": video_id, "transcript": transcript}
+    prompt = 'i want to learn about the taylor series'
+    syllabus = create_syllabus(prompt)
+    lessons = yt_api.create_lesson_plan(syllabus)
+    return {"status": "ok", "lessons": lessons, "syllabus": syllabus}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -60,11 +60,14 @@ def get_courses(user_id=Depends(check_hash)):
 
 @app.get("/")
 def health_check():
+    return {"status": "ok"}
+
+@app.get("/test")
+async def test_yt():
     prompt = "i want to learn about the taylor series"
     syllabus = create_syllabus(prompt)
-    lessons = yt_api.create_lesson_plan(syllabus)
-    return {"status": "ok", "lessons": lessons, "syllabus": syllabus}
-
+    lessons = await yt_api.create_lesson_plan(syllabus)
+    return {"lessons": lessons, "syllabus": syllabus}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -1,22 +1,37 @@
 'use client';
-import React from 'react'
-import Chatbar from '../../../components/Chatbar'
-import Sidebar from "../../../components/Sidebar"
-import { getUser } from '../../../hooks/getUser'
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import Chatbar from '../../../components/Chatbar';
+import Sidebar from "../../../components/Sidebar";
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+
+interface Topic {
+  id: string;
+  topic: string;
+}
 
 const Home = () => {
-  const [user, setUser] = useState<string | null>(null);
+  const router = useRouter();
+  const [user, setUser] = useState("");
+  const [topics, setTopics] = useState<Topic[]>([]);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { username } = await getUser();
-      setUser(username);
-    };
-    fetchUser();
+    const username = Cookies.get("username") || "";
+    setUser(username);
+    
+    if (!username) {
+      router.push('/login');
+    }
+  }, [router]);
+
+  useEffect(() => {
+    // Fetch the topics from the database "/"
+    const topics = 
+    setTopics(topics);
   }, []);
 
-  console.log("Username", user)
+  console.log("Username", user);
+
   return (
     <div className="flex h-screen bg-gray-900 text-white">
       <Sidebar username={user ? user : ""} />

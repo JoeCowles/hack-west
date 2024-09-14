@@ -3,11 +3,11 @@ import json
 from playwright.async_api import async_playwright
 
 
-async def search_google_for_quora(term):
+async def search_google_for_quora(term, use_firefox=False):
     browser = None
     try:
         async with async_playwright() as p:
-            browser = await p.chromium.launch(
+            browser = await (p.chromium if (not use_firefox) else p.firefox).launch(
                 args=[
                     "--no-sandbox",
                     "--disable-setuid-sandbox",
@@ -19,9 +19,11 @@ async def search_google_for_quora(term):
                 ],
                 headless=True,
             )
+            
             page = await browser.new_page()
 
             url = f"https://www.google.com/search?q=site:youtube.com+{term}"
+            
             await page.goto(url)
 
             await page.wait_for_selector("div.g")
@@ -45,7 +47,10 @@ async def search_google_for_quora(term):
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        return []
+        if use_firefox:
+            return []
+        else:
+            return await search_google_for_quora(term, True)
 
     finally:
         if browser:

@@ -11,7 +11,7 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 import youtube_transcript_api
 
-DEFAULT_LANG = 'en-us'
+DEFAULT_LANG = "en-us"
 
 YouTubeTranscriptApi = dotenv.load_dotenv(dotenv.find_dotenv("GoogleAPI_PWD"))
 app = FastAPI()
@@ -56,20 +56,21 @@ def get_video_id(topic: str) -> str:
 
     return response["items"][0]["id"]["videoId"]
 
+
 def get_transcript(video_id: str):
-    transcript_dict_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id)
+    transcript_dict_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(
+        video_id
+    )
     transcript_list = [d["text"] for d in transcript_dict_list]
-    transcript = ''
+    transcript = ""
     for line in transcript_list:
-        transcript += line + ' '
+        transcript += line + " "
     return transcript
 
 
 mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
 
-connection_string = (
-    f"mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/"
-)
+connection_string = f"mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(connection_string)
 
 
@@ -141,10 +142,15 @@ def get_videos(response):
 
 @app.get("/")
 def health_check():
-    query = 'intro to proofs'
-    video_id=get_video_id('intro to proofs')
+    query = "intro to proofs"
+    video_id = get_video_id("intro to proofs")
     transcript = get_transcript(video_id)
-    return {"status": "ok", "query": query, "video id": video_id, "transcript": transcript}
+    return {
+        "status": "ok",
+        "query": query,
+        "video id": video_id,
+        "transcript": transcript,
+    }
 
 
 if __name__ == "__main__":

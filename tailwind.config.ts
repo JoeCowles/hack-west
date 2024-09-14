@@ -12,6 +12,18 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      backgroundSize: {
+        '300%': '300%',
+      },
+      animation: {
+        shimmer: 'shimmer 3s ease-in-out infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%, 100%': { backgroundPosition: 'left center' },
+          '50%': { backgroundPosition: 'right center' },
+        },
+      },
     },
   },
   plugins: [],

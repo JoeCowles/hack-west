@@ -7,11 +7,10 @@ from .gen_syllabus import create_syllabus
 from fastapi import Depends
 import json
 from fastapi.middleware.cors import CORSMiddleware
-from . import gen_syllabus
 from . import yt_api
 from .mongoDB import logindb, check_hashdb, signupdb
 
-DEFAULT_LANG = 'en-us'
+DEFAULT_LANG = "en-us"
 
 google_key = dotenv.load_dotenv(dotenv.find_dotenv("GoogleAPI_PWD"))
 app = FastAPI()
@@ -31,7 +30,9 @@ app.add_middleware(
 
 mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
 
-connection_string = f"mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/"
+connection_string = (
+    f"mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/"
+)
 client = MongoClient(connection_string)
 
 
@@ -65,12 +66,14 @@ def get_courses(user_id=Depends(check_hash)):
     # TODO: return the courses for the user
     return {"courses": []}
 
+
 @app.get("/")
 def health_check():
-    query = 'taylor series'
-    video_id=yt_api.get_video_id(query)
-    transcript = yt_api.get_transcript(video_id)
-    return {"status": "ok", "query": query, "video id": video_id, "transcript": transcript}
+    prompt = "i want to learn about the taylor series"
+    syllabus = create_syllabus(prompt)
+    lessons = yt_api.create_lesson_plan(syllabus)
+    return {"status": "ok", "lessons": lessons, "syllabus": syllabus}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

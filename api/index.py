@@ -3,10 +3,11 @@ import dotenv
 import uvicorn
 import os
 from pymongo import MongoClient
-from . import gen_syllabus
+from .gen_syllabus import create_syllabus
 from fastapi import Depends
 import googleapiclient.discovery
 import json
+from .mongoDB import check_hashdb, signupdb, logindb
 
 YouTubeTranscriptApi = dotenv.load_dotenv(dotenv.find_dotenv("GoogleAPI_PWD"))
 app = FastAPI()
@@ -39,63 +40,30 @@ def get_video_id(topic: str) -> str:
 
     return response["items"][0]["id"]["videoId"]
 
-load_dotenv()
-mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
 
+mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
 connection_string = f"mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/"
 client = MongoClient(connection_string)
 
 
 Db = client.Core
 collection = Db.Users
-# collections = Db.list_collection_names()
-data1 = {
-    "email": "jon22@gmail.com",
-    "password": "pass"
-    }
-collection.insert_one(data1)
-
 
 
 def check_hash(pass_hash: str):
-    collection = Db.Users# Checks the user table and finds the user id of the user with the given pass_hash
-    user_id = collection.find_one({"password": pass_hash})
-    if user_id:
-        return user_id["_id"]
+    return check_hashdb(pass_hash)
     
-check_hash("reee")
 @app.post("/signup")
 def signup(email: str, pass_hash: str):
-    # return the status of the signup
-    collection = Db.Users
-
-    data1 = {
-    "email": email, 
-    "password": pass_hash
-    }
-
-    user_id = collection.insert_one(data1)
-
-    return user_id.inserted_id, {"status": "good"}
-    # Return good if the signup is successful, return bad if the signup is unsuccessful
-
-
+    return signupdb(email, pass_hash)
+    
 @app.post("/login")
 def login(email: str, pass_hash: str):
-    collection = Db.Users
-    # return the status of the login
-    if collection.find_one({"email": email}):
-        user = collection.find_one({"email": email})
-        if user["password"] == pass_hash:
-            # Return good if the login is successful
-            return user["_id"], {"status": "good"}
-        
-    # return bad if the login is unsuccessful
-    return {"status": "bad"}
+    return logindb(email, pass_hash)
 
 @app.post("/create-course")
 def create_course(prompt: str, user_id=Depends(check_hash)):
-    syllabus = gen_syllabus.create_syllabus(prompt)
+    syllabus = create_syllabus(prompt)
     print(syllabus)
     # Next, Create the lessons.
     return ""
@@ -113,7 +81,7 @@ def get_videos(response):
 
 @app.get("/")
 def health_check():
-    video_id=get_video('intro to proofs')
+    video_id=get_video_id('intro to proofs')
     return {"status": "ok", "video id": video_id}
 
 

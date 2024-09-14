@@ -5,7 +5,7 @@ import json
 
 load_dotenv()
 
-genai.configure(api_key=os.environ["NEXT_PUBLIC_GEMINI_API_KEY"])
+genai.configure(api_key=os.environ["GoogleAPI_PWD"])
 
 
 # Create the model

@@ -34,8 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env
 
 # api
 api/.env
 api/__pycache__/__init__.cpython-310.pyc
+api/__pycache__/index.cpython-310.pyc
 api/__pycache__/index.cpython-310.pyc

@@ -5,7 +5,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-96">
-        <h1 className="text-3xl font-bold mb-6 text-white text-center">Login</h1>
+        <h1 className="text-3xl font-bold mb-6 text-white text-center">Register</h1>
         <form>
           <div className="mb-4">
             <label htmlFor="email" className="block text-white mb-2">Email</label>

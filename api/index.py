@@ -3,6 +3,8 @@ import dotenv
 import uvicorn
 import os
 from pymongo import MongoClient
+import gen_syllabus
+from fastapi import Depends
 import googleapiclient.discovery
 
 YouTubeTranscriptApi = dotenv.load_dotenv(dotenv.find_dotenv("YouTubeAPI_PWD"))
@@ -56,6 +58,21 @@ def login(email: str, pass_hash: str):
     # return the status of the login
     return {"status": "ok"}
     # Return good if the login is successful, return bad if the login is unsuccessful
+
+
+@app.post("/create-course")
+def create_course(prompt: str, user_id=Depends(check_hash)):
+    syllabus = gen_syllabus.create_syllabus(prompt)
+    print(syllabus)
+    # Next, Create the lessons.
+    return ""
+
+
+@app.get("/get-courses")
+def get_courses(user_id=Depends(check_hash)):
+
+    # TODO: return the courses for the user
+    return {"courses": []}
 
 def get_videos(response):
     print(type(response))

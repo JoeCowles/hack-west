@@ -8,17 +8,15 @@ import { btoa } from 'buffer';
 const api_url = process.env.NEXT_PUBLIC_API_URL;
 
 
-export function getUser() {
+export default function getUser() {
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const storedUserId = Cookies.get('user_id');
-    const storedUsername = Cookies.get('username');
-    if (storedUserId && storedUsername) {
+    if (storedUserId) {
       setUserId(storedUserId);
-      setUsername(storedUsername);
     } else {
       router.push('/login');
     }
@@ -36,12 +34,13 @@ export function getUser() {
         const data = await response.json();
         console.log(data);
         setUserId(data.user_id);
-        setUsername(data.username);
+        setUsername(email);
         Cookies.set('user_id', data.user_id, { expires: 7 }); // Expires in 7 days
         Cookies.set('username', email, { expires: 7 });
         console.log("User logged in");
         console.log(data.user_id);
         console.log(data.username);
+        
         router.push('/home');
       } else {
         throw new Error('Login failed');
@@ -51,21 +50,22 @@ export function getUser() {
     }
   };
 
-  const signup = async (email: string, password: string, username: string) => {
+  const signup = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/signup', {
+      const pass_hash = password; // Simple encoding for demonstration
+      const response = await fetch(`${api_url}/signup?email=${encodeURIComponent(email)}&pass_hash=${encodeURIComponent(pass_hash)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, username }),
       });
       if (response.ok) {
         const data = await response.json();
         setUserId(data.user_id);
-        setUsername(data.username);
+        setUsername(email);
+        console.log(data.user_id);
         Cookies.set('user_id', data.user_id, { expires: 7 });
-        Cookies.set('username', data.username, { expires: 7 });
         router.push('/home');
       } else {
+        console.log(response);
         throw new Error('Signup failed');
       }
     } catch (error) {

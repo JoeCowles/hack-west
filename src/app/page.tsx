@@ -36,7 +36,7 @@ export default function Home() {
         <div className="relative z-10 text-center text-white">
           <h1 className="text-5xl font-bold mb-4">YoutubeStudyPlan.co</h1>
           <p className="text-xl font-bold">Learn anything, anywhere, anytime</p>
-          <p className="text-xl mb-8 font-bold">Custom lession plans for any topic</p>
+          <p className="text-xl mb-8 font-bold">Custom lesson plans for any topic</p>
             <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => router.push("/login")}>
               Get Started
           </button>

@@ -2,20 +2,14 @@ import dotenv
 import os
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
-client = MongoClient("mongodb://imaquvzf:30a5a1d1-efe0-45fd-9b7b-35ffbd487c8a@<hostname:<port>",
-    server_api=ServerApi("<Stable API version>"))
+
 mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
 connection_string = f"mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/"
 client = MongoClient(connection_string)
 Db = client.Core
 collection = Db.Users
 
-
-def check_hashdb(pass_hash: str):
-    collection = Db.Users# Checks the user table and finds the user id of the user with the given pass_hash
-    user_id = collection.find_one({"password": pass_hash})
-    
-    return user_id["_id"] 
+#seters
 def signupdb(email: str, pass_hash: str):
     # return the status of the signup
     collection = Db.Users
@@ -41,6 +35,7 @@ def logindb(email: str, pass_hash: str):
     # return bad if the login is unsuccessful
     return {"status": "bad"}
 def mkSyllabusdb(topic: str, description: str, user_id):
+    collection = Db.sylabus
     data = {
         "foreign key": user_id,
         "topic": topic,
@@ -49,7 +44,7 @@ def mkSyllabusdb(topic: str, description: str, user_id):
     syb = collection.insert_one(data)
     return syb["_id"], {"status": "good"}
 def mkLecturedb(description: str, video_id: str, syllabus_id):
-    
+    collection = Db.lecture
     data = {
         "foreign key": syllabus_id,
         "description": description,
@@ -58,12 +53,14 @@ def mkLecturedb(description: str, video_id: str, syllabus_id):
     lecture = collection.insert_one(data)
     return lecture["_id"], {"status": "good"}
 def mkQuizdb(lecture_id: str):
+    collection = Db.quiz
     data = {
         "foreign key": lecture_id
     }
     quiz = collection.insert_one(data)
     return quiz["_id"], {"status": "good"}
 def mkQuestionb(quiz_id: str, questions: str, answers):
+    collection = Db.questions
     data = {
         "foreign key": quiz_id,
         "questions": questions,
@@ -71,3 +68,23 @@ def mkQuestionb(quiz_id: str, questions: str, answers):
     }
     question = collection.insert_one(data)
     return question["_id"], {"status": "good"}
+
+
+#geters
+def check_hashdb(pass_hash: str):
+    collection = Db.Users# Checks the user table and finds the user id of the user with the given pass_hash
+    user_id = collection.find_one({"password": pass_hash})
+    
+    return user_id["_id"] 
+def getsyllabus(mark):
+    sylabus = Db.syllabus
+    return sylabus.find_one({"_id": mark})
+def getLecture(mark):
+    lecture = Db.syllabus
+    return lecture.find_one({"_id": mark})
+def getQuiz(mark):
+    quiz = Db.syllabus
+    return quiz.find_one({"_id": mark})
+def getQuestion(mark):
+    question = Db.syllabus
+    return question.find_one({"_id": mark})

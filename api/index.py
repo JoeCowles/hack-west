@@ -1,16 +1,13 @@
 from fastapi import FastAPI
-from dotenv import load_dotenv, find_dotenv
+import dotenv
 import uvicorn
 import os
 from pymongo import MongoClient
+import googleapiclient.discovery
 
-YouTubeTranscriptApi = load_dotenv(find_dotenv("YouTubeAPI_PWD"))
+YouTubeTranscriptApi = dotenv.load_dotenv(dotenv.find_dotenv("YouTubeAPI_PWD"))
 app = FastAPI()
 
-import os
-
-import googleapiclient.discovery
-import dotenv
 
 scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
@@ -24,18 +21,19 @@ def test_youtube_api():
 
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = os.getenv("YouTube_PWD")
+    DEVELOPER_KEY = os.getenv("YouTubeAPI_PWD")
 
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey = DEVELOPER_KEY)
 
     request = youtube.search().list(
-        part="id",
+        part="id,snippet",
         q="Youtube Data API"
     )
     response = request.execute()
 
     return response
+
 MongoPassword = os.environ.get("MONGODB_PWD")
 connection_string = "mongodb+srv://nathanschober25:{MongoPassword}@core.fs1nb.mongodb.net/?retryWrites=true&w=majority&appName=Core"
 client = MongoClient(connection_string)
@@ -59,11 +57,15 @@ def login(email: str, pass_hash: str):
     return {"status": "ok"}
     # Return good if the login is successful, return bad if the login is unsuccessful
 
+def get_videos(response):
+    print(type(response))
+    return response['items']
 
 @app.get("/")
 def health_check():
     youtube_response=test_youtube_api()
-    return {"status": "ok", "response": youtube_response}
+    videos=get_videos(youtube_response)
+    return {"status": "ok", "\nvideos": videos}
 
 
 if __name__ == "__main__":

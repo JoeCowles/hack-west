@@ -1,14 +1,15 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv, find_dotenv
 import uvicorn
+import os
+from pymongo import MongoClient
 
 YouTubeTranscriptApi = load_dotenv(find_dotenv("YouTubeAPI_PWD"))
 app = FastAPI()
 
-
-@app.get("/GetTranscript")
-def GetTranscript(video_id):
-    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["ar"])
+MongoPassword = os.environ.get("MONGODB_PWD")
+connection_string = "mongodb+srv://nathanschober25:{MongoPassword}@core.fs1nb.mongodb.net/?retryWrites=true&w=majority&appName=Core"
+client = MongoClient(connection_string)
 
 
 def check_hash(pass_hash: str):

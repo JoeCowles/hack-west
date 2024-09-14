@@ -1,12 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useUser } from '../../../hooks/getUser';
+import { getUser } from '../../../hooks/getUser';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useUser();
+  const { login } = getUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

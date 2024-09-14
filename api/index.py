@@ -74,7 +74,6 @@ def health_check():
 @app.get("/test")
 async def test_yt():
     prompt = "i want to learn about the taylor series"
-    print(google_key)
     syllabus = create_syllabus(prompt)
     lessons = await yt_api.create_lesson_plan(syllabus)
     return {"lessons": lessons, "syllabus": syllabus}

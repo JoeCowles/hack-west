@@ -1,10 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
-import getUser from '../hooks/getUser'
+import { getUser } from '../hooks/getUser'
 
-const Sidebar = () => {
-  const { userId, username } = getUser()
+// props for sidebar
+interface SidebarProps {
+  username: string;
+}
 
+const Sidebar = ({ username }: SidebarProps) => {
   return (
     <aside className="w-64 bg-black p-6 text-white animate-slideInFromLeft">
       <div className="mb-8">

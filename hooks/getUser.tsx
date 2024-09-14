@@ -15,10 +15,8 @@ export function getUser() {
 
   useEffect(() => {
     const storedUserId = Cookies.get('user_id');
-    const storedUsername = Cookies.get('username');
-    if (storedUserId && storedUsername) {
+    if (storedUserId) {
       setUserId(storedUserId);
-      setUsername(storedUsername);
     } else {
       router.push('/login');
     }
@@ -51,21 +49,22 @@ export function getUser() {
     }
   };
 
-  const signup = async (email: string, password: string, username: string) => {
+  const signup = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/signup', {
+      const pass_hash = password; // Simple encoding for demonstration
+      const response = await fetch(`${api_url}/signup?email=${encodeURIComponent(email)}&pass_hash=${encodeURIComponent(pass_hash)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, username }),
       });
       if (response.ok) {
         const data = await response.json();
         setUserId(data.user_id);
         setUsername(data.username);
+        console.log(data.user_id);
         Cookies.set('user_id', data.user_id, { expires: 7 });
-        Cookies.set('username', data.username, { expires: 7 });
         router.push('/home');
       } else {
+        console.log(response);
         throw new Error('Signup failed');
       }
     } catch (error) {

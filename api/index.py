@@ -9,6 +9,7 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from . import gen_syllabus
 from . import yt_api
+from .mongoDB import logindb, check_hashdb, signupdb
 
 DEFAULT_LANG = 'en-us'
 

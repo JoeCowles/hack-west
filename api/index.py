@@ -9,7 +9,7 @@ app = FastAPI()
 load_dotenv()
 mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
 
-connection_string = "mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/"
+connection_string = f"mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/"
 client = MongoClient(connection_string)
 
 
@@ -30,7 +30,7 @@ def check_hash(pass_hash: str):
     if user_id:
         return user_id["_id"]
     
-
+check_hash("reee")
 @app.post("/signup")
 def signup(email: str, pass_hash: str):
     # return the status of the signup

@@ -8,11 +8,13 @@ from fastapi import Depends
 import json
 from fastapi.middleware.cors import CORSMiddleware
 from . import yt_api
-from .mongoDB import logindb, check_hashdb, signupdb
+
+# from .mongoDB import logindb, check_hashdb, signupdb
 
 DEFAULT_LANG = "en-us"
 
-google_key = dotenv.load_dotenv(dotenv.find_dotenv("GoogleAPI_PWD"))
+# oogle_key = dotenv.load_dotenv(dotenv.find_dotenv("GoogleAPI_PWD"))
+google_key = os.getenv("GoogleAPI_PWD")
 app = FastAPI()
 
 scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
@@ -30,6 +32,11 @@ app.add_middleware(
 
 
 def check_hash(pass_hash: str):
+    return "id"
+
+
+"""
+def check_hash(pass_hash: str):
     return check_hashdb(pass_hash)
 
 
@@ -41,6 +48,7 @@ def signup(email: str, pass_hash: str):
 @app.post("/login")
 def login(email: str, pass_hash: str):
     return logindb(email, pass_hash)
+"""
 
 
 @app.post("/create-course")
@@ -62,12 +70,15 @@ def get_courses(user_id=Depends(check_hash)):
 def health_check():
     return {"status": "ok"}
 
+
 @app.get("/test")
 async def test_yt():
     prompt = "i want to learn about the taylor series"
+    print(google_key)
     syllabus = create_syllabus(prompt)
     lessons = await yt_api.create_lesson_plan(syllabus)
     return {"lessons": lessons, "syllabus": syllabus}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

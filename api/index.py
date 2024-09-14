@@ -7,6 +7,9 @@ from . import gen_syllabus
 from fastapi import Depends
 import googleapiclient.discovery
 import json
+import youtube_transcript_api
+
+DEFAULT_LANG = 'en-us'
 
 YouTubeTranscriptApi = dotenv.load_dotenv(dotenv.find_dotenv("GoogleAPI_PWD"))
 app = FastAPI()
@@ -38,6 +41,14 @@ def get_video_id(topic: str) -> str:
     response = request.execute()
 
     return response["items"][0]["id"]["videoId"]
+
+def get_transcript(video_id: str):
+    transcript_dict_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(video_id)
+    transcript_list = [d["text"] for d in transcript_dict_list]
+    transcript = ''
+    for line in transcript_list:
+        transcript += line + ' '
+    return transcript
 
 MongoPassword = os.environ.get("MONGODB_PWD")
 connection_string = "mongodb+srv://nathanschober25:{MongoPassword}@core.fs1nb.mongodb.net/?retryWrites=true&w=majority&appName=Core"
@@ -83,8 +94,10 @@ def get_videos(response):
 
 @app.get("/")
 def health_check():
-    video_id=get_video('intro to proofs')
-    return {"status": "ok", "video id": video_id}
+    query = 'intro to proofs'
+    video_id=get_video_id('intro to proofs')
+    transcript = get_transcript(video_id)
+    return {"status": "ok", "query": query, "video id": video_id, "transcript": transcript}
 
 
 if __name__ == "__main__":

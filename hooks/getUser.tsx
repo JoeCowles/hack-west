@@ -8,7 +8,7 @@ import { btoa } from 'buffer';
 const api_url = process.env.NEXT_PUBLIC_API_URL;
 
 
-export function getUser() {
+export default function getUser() {
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
@@ -34,12 +34,13 @@ export function getUser() {
         const data = await response.json();
         console.log(data);
         setUserId(data.user_id);
-        setUsername(data.username);
+        setUsername(email);
         Cookies.set('user_id', data.user_id, { expires: 7 }); // Expires in 7 days
         Cookies.set('username', email, { expires: 7 });
         console.log("User logged in");
         console.log(data.user_id);
         console.log(data.username);
+        
         router.push('/home');
       } else {
         throw new Error('Login failed');
@@ -59,7 +60,7 @@ export function getUser() {
       if (response.ok) {
         const data = await response.json();
         setUserId(data.user_id);
-        setUsername(data.username);
+        setUsername(email);
         console.log(data.user_id);
         Cookies.set('user_id', data.user_id, { expires: 7 });
         router.push('/home');

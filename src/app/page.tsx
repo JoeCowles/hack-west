@@ -1,4 +1,6 @@
+'use client';
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface FeatureCardProps {
   title: string;
@@ -17,6 +19,7 @@ function FeatureCard({ title, description, icon }: FeatureCardProps) {
 }
 
 export default function Home() {
+  const router = useRouter();
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
@@ -34,7 +37,7 @@ export default function Home() {
           <h1 className="text-5xl font-bold mb-4">YoutubeStudyPlan.co</h1>
           <p className="text-xl font-bold">Learn anything, anywhere, anytime</p>
           <p className="text-xl mb-8 font-bold">Custom lession plans for any topic</p>
-            <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            <button className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => router.push("/login")}>
               Get Started
           </button>
         </div>
@@ -69,9 +72,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">About Us</h2>
           <p className="text-center max-w-2xl mx-auto">
-            YoutubeStudyPlan.co is dedicated to revolutionizing online learning. 
-            We combine the vast resources of YouTube with cutting-edge AI to create 
-            personalized learning experiences for everyone, anywhere, anytime.
+            YoutubeStudyPlan.co is a project born at HackWestTx 2024. We are cracked programmers.
           </p>
         </div>
       </section>

@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv, find_dotenv
 import uvicorn
-YouTubeTranscriptApi = load_dotenv(find_dotenv("YouTubeAPI_PWD"))YouTubeAPI_PWD
+
+YouTubeTranscriptApi = load_dotenv(find_dotenv("YouTubeAPI_PWD"))
 app = FastAPI()
+
 
 @app.get("/GetTranscript")
 def GetTranscript(video_id):
     transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["ar"])
+
 
 def check_hash(pass_hash: str):
     # Checks the user table and finds the user id of the user with the given pass_hash

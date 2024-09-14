@@ -28,25 +28,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
-
-connection_string = (
-    f"mongodb+srv://nathanschober25:{mongoPassword}@core.fs1nb.mongodb.net/"
-)
-client = MongoClient(connection_string)
-
-
-Db = client.Core
-collection = Db.Users
-
 
 def check_hash(pass_hash: str):
     return check_hashdb(pass_hash)
-    
+
+
 @app.post("/signup")
 def signup(email: str, pass_hash: str):
     return signupdb(email, pass_hash)
-    
+
+
 @app.post("/login")
 def login(email: str, pass_hash: str):
     return logindb(email, pass_hash)

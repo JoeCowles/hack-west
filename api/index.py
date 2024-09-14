@@ -1,10 +1,43 @@
 from fastapi import FastAPI
-from dotenv import load_dotenv, find_dotenv
+import dotenv
 import uvicorn
 import os
 from pymongo import MongoClient
-YouTubeTranscriptApi = load_dotenv(find_dotenv("YouTubeAPI_PWD"))
+from . import gen_syllabus
+from fastapi import Depends
+import googleapiclient.discovery
+import json
+
+YouTubeTranscriptApi = dotenv.load_dotenv(dotenv.find_dotenv("GoogleAPI_PWD"))
 app = FastAPI()
+
+scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
+
+dotenv.load_dotenv()
+
+# Takes in a topic string and returns the ID of the top video
+def get_video_id(topic: str) -> str:
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+    api_service_name = "youtube"
+    api_version = "v3"
+    DEVELOPER_KEY = os.getenv("GoogleAPI_PWD")
+
+    youtube = googleapiclient.discovery.build(
+        api_service_name, api_version, developerKey = DEVELOPER_KEY)
+
+    request = youtube.search().list(
+        part="id",
+        q=f"{topic}",
+        maxResults=1,
+        order="viewCount",
+        type="video",
+        videoCaption="closedCaption",
+        videoEmbeddable="true"
+    )
+    response = request.execute()
+
+    return response["items"][0]["id"]["videoId"]
 
 load_dotenv()
 mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
@@ -60,9 +93,28 @@ def login(email: str, pass_hash: str):
     # return bad if the login is unsuccessful
     return {"status": "bad"}
 
+@app.post("/create-course")
+def create_course(prompt: str, user_id=Depends(check_hash)):
+    syllabus = gen_syllabus.create_syllabus(prompt)
+    print(syllabus)
+    # Next, Create the lessons.
+    return ""
+
+
+@app.get("/get-courses")
+def get_courses(user_id=Depends(check_hash)):
+
+    # TODO: return the courses for the user
+    return {"courses": []}
+
+def get_videos(response):
+    j = json.dumps(response)
+    return response
+
 @app.get("/")
 def health_check():
-    return {"status": "ok"}
+    video_id=get_video('intro to proofs')
+    return {"status": "ok", "video id": video_id}
 
 
 if __name__ == "__main__":

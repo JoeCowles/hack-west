@@ -16,16 +16,6 @@ client = MongoClient(connection_string)
 Db = client.Core
 collection = Db.Users
 
-def check_hashdb(pass_hash: str):
-    collection = (
-        Db.Users
-    )  # Checks the user table and finds the user id of the user with the given pass_hash
-    user_id = collection.find_one({"password": pass_hash})
-
-    return str(user_id["_id"])
-
-
-
 #seters
 def signupdb(email: str, pass_hash: str):
     # return the status of the signup
@@ -38,8 +28,6 @@ def signupdb(email: str, pass_hash: str):
     print(user_id)
     return {"user_id": user_id, "status": "good"}
     # Return good if the signup is successful, return bad if the signup is unsuccessful
-
-
 def logindb(email: str, pass_hash: str):
     collection = Db.Users
     # return the status of the login
@@ -88,10 +76,12 @@ def mkQuestionb(quiz_id: str, questions: str, answers):
 
 #get entire file
 def check_hashdb(pass_hash: str):
-    collection = Db.Users# Checks the user table and finds the user id of the user with the given pass_hash
+    collection = (
+        Db.Users
+    )  # Checks the user table and finds the user id of the user with the given pass_hash
     user_id = collection.find_one({"password": pass_hash})
-    
-    return user_id["_id"] 
+
+    return str(user_id["_id"])
 def getsyllabus(mark):
     sylabus = Db.syllabus
     return sylabus.find_one({"_id": mark})

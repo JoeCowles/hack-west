@@ -8,6 +8,7 @@ from . import gen_syllabus
 from fastapi import Depends
 import googleapiclient.discovery
 import json
+from fastapi.middleware.cors import CORSMiddleware
 
 YouTubeTranscriptApi = dotenv.load_dotenv(dotenv.find_dotenv("GoogleAPI_PWD"))
 app = FastAPI()
@@ -53,7 +54,6 @@ def get_video_id(topic: str) -> str:
     return response["items"][0]["id"]["videoId"]
 
 
-load_dotenv()
 mongoPassword = str(os.environ.get("PUBLIC_MONGODB_PWD"))
 
 connection_string = (

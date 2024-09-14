@@ -54,7 +54,7 @@ def logindb(email: str, pass_hash: str):
 def mkSyllabusdb(topic: str, description: str, user_id):
     collection = Db.sylabus
     data = {
-        "foreign key": user_id,
+        "foreign_key": user_id,
         "topic": topic,
         "description": description
     }
@@ -63,7 +63,7 @@ def mkSyllabusdb(topic: str, description: str, user_id):
 def mkLecturedb(description: str, video_id: str, syllabus_id):
     collection = Db.lecture
     data = {
-        "foreign key": syllabus_id,
+        "foreign_key": syllabus_id,
         "description": description,
         "video_id": video_id
     }
@@ -72,22 +72,21 @@ def mkLecturedb(description: str, video_id: str, syllabus_id):
 def mkQuizdb(lecture_id: str):
     collection = Db.quiz
     data = {
-        "foreign key": lecture_id
+        "foreign_key": lecture_id
     }
     quiz = collection.insert_one(data)
     return quiz["_id"], {"status": "good"}
 def mkQuestionb(quiz_id: str, questions: str, answers):
     collection = Db.questions
     data = {
-        "foreign key": quiz_id,
+        "foreign_key": quiz_id,
         "questions": questions,
         "answers": answers
     }
     question = collection.insert_one(data)
     return question["_id"], {"status": "good"}
 
-
-#geters
+#get entire file
 def check_hashdb(pass_hash: str):
     collection = Db.Users# Checks the user table and finds the user id of the user with the given pass_hash
     user_id = collection.find_one({"password": pass_hash})
@@ -105,3 +104,20 @@ def getQuiz(mark):
 def getQuestion(mark):
     question = Db.syllabus
     return question.find_one({"_id": mark})
+
+#get part of file
+def getId(clusterFile):
+    return clusterFile["_id"]
+def getDescription(clusterFile):
+    return clusterFile["description"]
+def getForignKey(clusterFile):
+    return clusterFile["forign_key"]
+def getVideoID(clusterFile):
+    return clusterFile["video_id"]
+def getAnswers(clusterFile):
+    return clusterFile["answers"]
+def getQuestionTXT(clusterFile):
+    return clusterFile["Questions"]
+
+
+

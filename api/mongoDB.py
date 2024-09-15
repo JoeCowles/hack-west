@@ -26,7 +26,7 @@ def signupdb(email: str, pass_hash: str):
     # return the status of the signup
     collection = Db.users
 
-    data1 = {"email": email, "password": pass_hash, "syllabus": ["66e612b0be15b4f04847bc09"]}
+    data1 = {"email": email, "password": pass_hash, "syllabus": []}
     print(data1)
     insert_result = collection.insert_one(data1)
     user_id = str(insert_result.inserted_id)

@@ -52,6 +52,23 @@ async def search_google_for_quora(term):
         if browser:
             await browser.close()
 
-async def search_videos(term):
-    results = await search_google_for_quora(term)
-    return results[0]
+async def search_videos(term, max_retries=3, delay=1):
+    for attempt in range(max_retries):
+        try:
+            results = await search_google_for_quora(term)
+            if results:
+                return results[0]
+            else:
+                print(f"No results found for: {term}")
+                return None
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed: {str(e)}")
+            if attempt < max_retries - 1:
+                print(f"Retrying in {delay} seconds...")
+                await asyncio.sleep(delay)
+            else:
+                print(f"Max retries reached. An error occurred while searching for videos: {str(e)}")
+                return {
+                    "title": "Error in searching for videos",
+                    "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                }

@@ -67,14 +67,15 @@ async def create_course(prompt: str, user_id: str):
         print(lesson['topic'], video_id, syllabus_id) 
         mkLecturedb(lesson['topic'], video_id, syllabus_id)
 
+
     #for lesson in lessons:
         #transcript = await yt_api.get_transcript(lesson.link)
         #lesson.transcript = transcript
         # Description, Syllabus_id, video_id    
 
-    #print(syllabus)
+    print(syllabus_id)
     # Next, Create the lessons.
-    return {"syllabus_id": syllabus_id}
+    return {"syllabus_id": str(syllabus_id)}
 
 
 

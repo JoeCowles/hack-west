@@ -10,7 +10,9 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from . import yt_api
 
-from .mongoDB import logindb, check_hashdb, signupdb, mkSyllabusdb, mkLecturedb
+from .mongoDB import logindb, check_hashdb, signupdb, mkSyllabusdb, mkLecturedb, mkQuizdb, mkQuestiondb
+
+
 
 
 DEFAULT_LANG = "en-us"
@@ -63,16 +65,40 @@ async def create_course(prompt: str, user_id: str):
             video_id = lesson['link'].split("v=")[1]
         else:
             video_id = lesson['link']
+
+        video_id = video_id.replace("https://www.youtube.com/watch?v=", "")
         # Create the lecture 
         print(lesson)
         print(lesson['topic'], video_id, syllabus_id) 
-        mkLecturedb(lesson['topic'], video_id, syllabus_id)
+        lesson['id'] = mkLecturedb(lesson['topic'], video_id, syllabus_id)
+        lesson['video_id'] = video_id
 
+    for lesson in lessons:
+        quiz_id = mkQuizdb(lesson['id'])
+        lesson['quiz_id'] = quiz_id
 
-    #for lesson in lessons:
-        #transcript = await yt_api.get_transcript(lesson.link)
-        #lesson.transcript = transcript
-        # Description, Syllabus_id, video_id    
+    for lesson in lessons:
+        transcript = yt_api.get_transcript(lesson['video_id'])
+        lesson['transcript'] = transcript
+        print("Transcript: ", transcript[:100])
+        quiz = create_quiz(transcript)
+        while quiz['quiz'] == None:
+            quiz = create_quiz(transcript)
+        print("Quiz: ", quiz)
+        for question in quiz['quiz']:
+            if question['type'] == 'multiple-choice':
+                question_text = question['question']
+                answers = question['choices']
+                correct_answer = question['correct-answer']
+            elif question['type'] == 'true-false':
+                question_text = question['question']
+                answers = ['True', 'False']
+                correct_answer = 0 if question['answer'] == 'True' else 1
+        
+            mkQuestiondb(lesson['quiz_id'], question_text, {
+                'choices': answers,
+                'correct_answer': correct_answer
+            })
 
     print(syllabus_id)
     # Next, Create the lessons.

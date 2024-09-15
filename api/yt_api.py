@@ -55,6 +55,8 @@ async def create_lesson_plan(syllabus):
             id['topic'] = lesson['topic']
         else:
             continue
+        # encode and decode to remove any non-utf-8 characters
+        id['topic'] = id['topic'].encode('utf-8', 'ignore').decode('utf-8')
         print(id)
         video_ids.append(id)
     return video_ids

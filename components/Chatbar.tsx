@@ -12,7 +12,7 @@ const Chatbar = () => {
     setIsLoading(true)
 
     const userId = Cookies.get('user_id')
-
+    
     console.log(userId)
     if (!userId) {
       console.error('User ID not found')

@@ -29,5 +29,6 @@ chat_session = model.start_chat(history=[])
 def create_syllabus(prompt: str):
     msg = chat_session.send_message(prompt).text
     # Parse the message to JSON. Remove the outer ```JSON tags
+    print('SYLLABUS JSON:', msg)
     json_msg = msg.strip("```JSON").strip("```")
     return json.loads(json_msg)

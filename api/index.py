@@ -95,13 +95,19 @@ def health_check():
 
 @app.get("/test-yt")
 async def test_yt():
-    prompt = "i want to learn about solving systems of equations using matrix methods. i only know very basic algebra"
+    prompt = "Teach me how to solve a complex differential equation, starting from a college algebra level"
     syllabus = create_syllabus(prompt)
     lessons = await yt_api.create_lesson_plan(syllabus)
-    print (lessons)
-    transcript = yt_api.get_transcript(yt_api.id_from_url(lessons["link"]))
-    quiz = create_quiz(transcript)
-    return {"syllabus": syllabus, "lesson": lessons, "quiz": quiz}
+    print ('Lessons (JSON?): ', lessons)
+    # TODO: This is only generating the first quiz, and since lessons is a list now it doesn't work
+    transcripts = []
+    quizzes = []
+    for lesson in lessons:
+        transcript = yt_api.get_transcript(yt_api.id_from_url(lesson["link"]))
+        transcripts.append(transcript)
+        quiz = create_quiz(transcript)
+        quizzes.append(quiz)
+    return {"prompt": prompt, "syllabus": syllabus, "lesson": lessons, "transcripts": transcripts, "quizzes": quizzes}
 
 
 if __name__ == "__main__":

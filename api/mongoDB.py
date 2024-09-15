@@ -87,7 +87,7 @@ def mkQuizdb(lecture_id: str):
         {"$push": {"quiz": quizId}}
     )
     return quizId
-def mkQuestionb(quiz_id: str, questions: str, answers):
+def mkQuestiondb(quiz_id: str, questions: str, answers):
     collection = Db.questions
     data = {
         "foreign_key": quiz_id,

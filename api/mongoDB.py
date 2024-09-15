@@ -24,7 +24,7 @@ collection = Db.Users
 #seters
 def signupdb(email: str, pass_hash: str):
     # return the status of the signup
-    collection = Db.Users
+    collection = Db.users
 
     data1 = {"email": email, "password": pass_hash, "syllabus": ["66e612b0be15b4f04847bc09"]}
     print(data1)
@@ -34,7 +34,7 @@ def signupdb(email: str, pass_hash: str):
     return {"user_id": user_id, "status": "good"}
     # Return good if the signup is successful, return bad if the signup is unsuccessful
 def logindb(email: str, pass_hash: str):
-    collection = Db.Users
+    collection = Db.users
     # return the status of the login
     if collection.find_one({"email": email}):
         user = collection.find_one({"email": email})
@@ -45,7 +45,7 @@ def logindb(email: str, pass_hash: str):
     # return bad if the login is unsuccessful
     return {"status": "bad"}
 def mkSyllabusdb(topic: str, description: str, user_id):
-    collection = Db.sylabus
+    collection = Db.syllabus
     data = {
         "foreign_key": user_id,
         "topic": topic,
@@ -106,7 +106,7 @@ def mkQuestionb(quiz_id: str, questions: str, answers):
 # returns user _id
 def check_hashdb(pass_hash: str):
     collection = (
-        Db.Users
+        Db.users
     )  # Checks the user table and finds the user id of the user with the given pass_hash
     user_id = collection.find_one({"password": pass_hash})
 
@@ -149,7 +149,7 @@ def getQuestionTXT(clusterFile):
     return clusterFile["Questions"]
 # returns contents of title feild (string)
 def getsylabi(user_id):
-    collection = Db.Users
+    collection = Db.users
     data = collection.find_one({"_id": user_id})
     return data["Sylabus"]
 

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getUser } from '../hooks/getUser'
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
-
+import { Book } from 'lucide-react';
 // props for sidebar
 interface Topic {
   id : string;
@@ -32,7 +32,11 @@ const Sidebar = ({ username }: SidebarProps) => {
         <h2 className="text-lg font-bold text-red-500 mb-4">{username}</h2>
       </div>
       <nav>
-        <h3 className="font-bold mb-4 text-lg text-gray-300">Courses</h3>
+
+        <div className="flex items-center gap-4 mb-4">
+          <Book className="text-white" />
+          <h3 className="font-bold text-lg text-gray-300">Courses</h3>
+        </div>
         <ul className="space-y-2">
           {syllabi.map((syllabus) => (
             <li key={syllabus.id}>

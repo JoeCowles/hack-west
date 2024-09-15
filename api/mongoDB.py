@@ -195,6 +195,7 @@ def get_syllabus_lessons(syllabus_id):
 
 def get_lesson_quiz_questions(lesson_id):
     lesson = Db.lecture.find_one({"_id": ObjectId(lesson_id)})
+    print("LESSON", lesson)
     if lesson:
         quiz_ids = lesson.get("quiz", [])
         quizzes = list(Db.quiz.find({"_id": {"$in": quiz_ids}}))

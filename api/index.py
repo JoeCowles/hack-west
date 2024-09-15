@@ -4,6 +4,7 @@ import uvicorn
 import os
 from pymongo import MongoClient
 from .gen_syllabus import create_syllabus
+from .gen_quiz import create_quiz
 from fastapi import Depends
 import json
 from fastapi.middleware.cors import CORSMiddleware
@@ -67,14 +68,15 @@ async def create_course(prompt: str, user_id: str):
         print(lesson['topic'], video_id, syllabus_id) 
         mkLecturedb(lesson['topic'], video_id, syllabus_id)
 
+
     #for lesson in lessons:
         #transcript = await yt_api.get_transcript(lesson.link)
         #lesson.transcript = transcript
         # Description, Syllabus_id, video_id    
 
-    #print(syllabus)
+    print(syllabus_id)
     # Next, Create the lessons.
-    return {"syllabus_id": syllabus_id}
+    return {"syllabus_id": str(syllabus_id)}
 
 
 
@@ -91,12 +93,15 @@ def health_check():
     return {"status": "ok"}
 
 
-@app.get("/test")
+@app.get("/test-yt")
 async def test_yt():
-    prompt = "i want to learn about the taylor series"
+    prompt = "i want to learn about solving systems of equations using matrix methods. i only know very basic algebra"
     syllabus = create_syllabus(prompt)
     lessons = await yt_api.create_lesson_plan(syllabus)
-    return {"lessons": lessons, "syllabus": syllabus}
+    print (lessons)
+    transcript = yt_api.get_transcript(yt_api.id_from_url(lessons["link"]))
+    quiz = create_quiz(transcript)
+    return {"syllabus": syllabus, "lesson": lessons, "quiz": quiz}
 
 
 if __name__ == "__main__":

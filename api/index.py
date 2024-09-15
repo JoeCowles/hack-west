@@ -138,12 +138,13 @@ def get_quiz(lesson_id: str):
     formatted_questions = [
         {
             "id": str(question["_id"]),
-            "question": question["question"],
-            "choices": question["choices"],
-            "correct_answer": question["correct_answer"]
+            "question": question["questions"],
+            "choices": question["answers"]["choices"],
+            "correct_answer": question["answers"]["correct_answer"]
         }
         for question in questions
     ]
+    print(formatted_questions)
     return {"questions": formatted_questions}
 
 @app.get("/")

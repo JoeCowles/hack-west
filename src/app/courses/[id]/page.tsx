@@ -24,11 +24,11 @@ const LessonCard: React.FC<{ lesson: Lesson; onClick: () => void }> = ({ lesson,
 
 const VideoPopup: React.FC<{ 
   videoId: string; 
-  quizId: string | null; 
+  lessonId: string; // Changed from quizId to lessonId
   onClose: () => void; 
   onQuizStart: () => void;
   showQuiz: boolean;
-}> = ({ videoId, quizId, onClose, onQuizStart, showQuiz }) => (
+}> = ({ videoId, lessonId, onClose, onQuizStart, showQuiz }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-gray-800 p-6 rounded-lg max-w-4xl w-full">
       {!showQuiz && (
@@ -48,18 +48,16 @@ const VideoPopup: React.FC<{
             >
               Close
             </button>
-            {quizId && (
-              <button 
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                onClick={onQuizStart}
-              >
-                Take Quiz
-              </button>
-            )}
+            <button 
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              onClick={onQuizStart}
+            >
+              Take Quiz
+            </button>
           </div>
         </>
       )}
-      {showQuiz && quizId && <QuizPopup quizId={quizId} onClose={onClose} />}
+      {showQuiz && <QuizPopup lessonId={lessonId} onClose={onClose} />}
     </div>
   </div>
 );
@@ -71,26 +69,26 @@ interface Question {
   correct_answer: number;
 }
 
-const QuizPopup: React.FC<{ quizId: string; onClose: () => void }> = ({ quizId, onClose }) => {
+const QuizPopup: React.FC<{ lessonId: string; onClose: () => void }> = ({ lessonId, onClose }) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch(`${apiUrl}/get-quiz?lesson_id=${quizId}`);
+        const response = await fetch(`${apiUrl}/get-quiz?lesson_id=${lessonId}`);
         const data = await response.json();
         setQuestions(data.questions);
-        console.log(data.questions);
       } catch (error) {
         console.error("Error fetching quiz questions:", error);
       }
     };
     fetchQuestions();
-  }, [quizId, apiUrl]);
+  }, [lessonId, apiUrl]);
 
   const handleAnswerSelect = (index: number) => {
     setSelectedAnswer(index);
@@ -116,16 +114,16 @@ const QuizPopup: React.FC<{ quizId: string; onClose: () => void }> = ({ quizId, 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg max-w-2xl w-full">
-        <h2 className="text-2xl font-bold mb-4">{currentQuestion.question}</h2>
-        <div className="space-y-2">
+        <h2 className="text-2xl font-bold mb-4 text-black">{currentQuestion.question}</h2>
+        <div className="space-y-2 text-black">
           {currentQuestion.choices.map((choice, index) => (
             <button
               key={index}
               className={`w-full p-2 text-left rounded ${
                 selectedAnswer === index
                   ? isCorrect
-                    ? 'bg-green-500 text-white'
-                    : 'bg-red-500 text-white'
+                    ? 'bg-green-500 text-black'
+                    : 'bg-red-500 text-black'
                   : 'bg-gray-200 hover:bg-gray-300'
               }`}
               onClick={() => handleAnswerSelect(index)}
@@ -187,8 +185,9 @@ const Home = () => {
     fetchLessons();
   }, [courseId, apiUrl]);
 
-  const handleLessonClick = (videoId: string) => {
+  const handleLessonClick = (videoId: string, lessonId: string) => {
     setSelectedVideo(videoId);
+    setSelectedQuiz(lessonId);
     setShowQuiz(false);
   };
 
@@ -215,7 +214,7 @@ const Home = () => {
             <LessonCard 
               key={lesson.id} 
               lesson={lesson} 
-              onClick={() => handleLessonClick(lesson.video_id)}
+              onClick={() => handleLessonClick(lesson.video_id, lesson.id)}
             />
           ))}
         </div>
@@ -223,7 +222,7 @@ const Home = () => {
       {selectedVideo && (
         <VideoPopup 
           videoId={selectedVideo} 
-          quizId={lessons.find(lesson => lesson.video_id === selectedVideo)?.quiz_id || null}
+          lessonId={selectedQuiz || ""} 
           onClose={closeVideo} 
           onQuizStart={startQuiz}
           showQuiz={showQuiz}

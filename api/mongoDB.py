@@ -71,7 +71,7 @@ def mkLecturedb(description: str, video_id: str, syllabus_id):
     lectureId = lecture.inserted_id
     Db.syllabus.update_one(
         {"_id": syllabus_id,},
-        {"$push": {"lectures": lectureId}}
+        {"$push": {"lessons": lectureId}}
     )
     return lectureId
 def mkQuizdb(lecture_id: str):
@@ -115,7 +115,7 @@ def check_hashdb(pass_hash: str):
 def getsyllabus(mark):
     sylabus = Db.syllabus
     return sylabus.find_one({"_id": mark})
-# returns complete lecture file
+# returns complete lecture file (from lessonId)
 def getLecture(mark):
     lecture = Db.syllabus
     return lecture.find_one({"_id": mark})

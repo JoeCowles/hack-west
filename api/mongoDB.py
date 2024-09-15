@@ -58,7 +58,7 @@ def mkSyllabusdb(topic: str, description: str, user_id):
         {"_id": user_id,},
         {"$push": {"syllabus": sybId}}
     )
-    return sybId, {"status": "good"}
+    return sybId
 def mkLecturedb(description: str, video_id: str, syllabus_id):
     collection = Db.lecture
     data = {
@@ -73,7 +73,7 @@ def mkLecturedb(description: str, video_id: str, syllabus_id):
         {"_id": syllabus_id,},
         {"$push": {"lectures": lectureId}}
     )
-    return lectureId, {"status": "good"}
+    return lectureId
 def mkQuizdb(lecture_id: str):
     collection = Db.quiz
     data = {
@@ -86,7 +86,7 @@ def mkQuizdb(lecture_id: str):
         {"_id": lecture_id,},
         {"$push": {"quiz": quizId}}
     )
-    return quizId, {"status": "good"}
+    return quizId
 def mkQuestionb(quiz_id: str, questions: str, answers):
     collection = Db.questions
     data = {
@@ -100,7 +100,7 @@ def mkQuestionb(quiz_id: str, questions: str, answers):
         {"_id": quiz_id,},
         {"$push": {"questions": questionId}}
     )
-    return questionId, {"status": "good"}
+    return questionId
 
 #get entire file (returns a dictionary)
 # returns user _id

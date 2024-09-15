@@ -47,7 +47,8 @@ def mkSyllabusdb(topic: str, description: str, user_id):
     data = {
         "foreign_key": user_id,
         "topic": topic,
-        "description": description
+        "description": description,
+        "lessons": []
     }
     syb = collection.insert_one(data)
     sybId = str(syb.inserted_id)
@@ -61,25 +62,27 @@ def mkLecturedb(description: str, video_id: str, syllabus_id):
     data = {
         "foreign_key": syllabus_id,
         "description": description,
-        "video_id": video_id
+        "video_id": video_id,
+        "quiz": []
     }
     lecture = collection.insert_one(data)
     lectureId = str(lecture.inserted_id)
     collection.update_one(
         {"_id": syllabus_id,},
-        {"$push": {"syllabus": lectureId}}
+        {"$push": {"lectures": lectureId}}
     )
     return lectureId, {"status": "good"}
 def mkQuizdb(lecture_id: str):
     collection = Db.quiz
     data = {
-        "foreign_key": lecture_id
+        "foreign_key": lecture_id,
+        "questions": []
     }
     quiz = collection.insert_one(data)
     quizId = str(quiz.inserted_id)
     collection.update_one(
         {"_id": lecture_id,},
-        {"$push": {"syllabus": quizId}}
+        {"$push": {"quiz": quizId}}
     )
     return quizId, {"status": "good"}
 def mkQuestionb(quiz_id: str, questions: str, answers):
@@ -93,7 +96,7 @@ def mkQuestionb(quiz_id: str, questions: str, answers):
     questionId = str(question.inserted_id)
     collection.update_one(
         {"_id": quiz_id,},
-        {"$push": {"syllabus": questionId}}
+        {"$push": {"questions": questionId}}
     )
     return questionId, {"status": "good"}
 
@@ -139,13 +142,13 @@ def getsylabi(user_id):
     return data["Sylabus"]
 
 #adding data
-def addLecture(user_id, sylabus_id):
-    collection = Db.Users
-    collection.update_one(
-        {"_id": user_id}, 
-        {"$set": {"Sylabus": sylabus_id}}
-    )
+# def addLecture(user_id, sylabus_id):
+#     collection = Db.Users
+#     collection.update_one(
+#         {"_id": user_id}, 
+#         {"$set": {"Sylabus": sylabus_id}}
+#     )
 
 
 
-signupdb("rich.com", "pass")
+#signupdb("rich.com", "pass")

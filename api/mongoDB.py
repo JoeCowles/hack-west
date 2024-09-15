@@ -133,6 +133,7 @@ def getScore(mark):
     quiz = Db.quiz
     quizCluster = quiz.find_one({"_id": mark})
     return quizCluster["score"]
+#assignes passed value to score feild in quiz file
 def updateScore(mark, grade):
     quiz = Db.quiz
     quiz.update_one(
@@ -140,6 +141,7 @@ def updateScore(mark, grade):
         {"score": grade}
     )
     return 0
+
 #get part of file
 # returns id field of file passed (bson object)
 def getId(clusterFile):

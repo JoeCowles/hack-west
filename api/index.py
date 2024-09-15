@@ -49,7 +49,11 @@ def signup(email: str, pass_hash: str):
 
 @app.post("/login")
 def login(email: str, pass_hash: str):
-    return logindb(email, pass_hash)
+    id = logindb(email, pass_hash)
+    print(id)
+    return {
+        'user_id': str(id['user_id']),
+    }
 
 @app.get("/get-courses")
 def get_courses(user_id: str):

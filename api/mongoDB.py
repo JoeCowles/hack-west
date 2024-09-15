@@ -26,7 +26,10 @@ def signupdb(email: str, pass_hash: str):
     # return the status of the signup
     collection = Db.users
 
-    data1 = {"email": email, "password": pass_hash, "syllabus": []}
+    data1 = {"email": email, 
+            "password": pass_hash, 
+            "syllabus": []
+            }
     print(data1)
     insert_result = collection.insert_one(data1)
     user_id = str(insert_result.inserted_id)
@@ -166,19 +169,6 @@ def getsylabi(user_id):
     collection = Db.Users
     data = collection.find_one({"_id": user_id})
     return data["syllabus"]
-
-
-#adding data
-# def addLecture(user_id, sylabus_id):
-#     collection = Db.Users
-#     collection.update_one(
-#         {"_id": user_id}, 
-#         {"$set": {"Sylabus": sylabus_id}}
-#     )
-
-
-
-#signupdb("rich.com", "pass")
 
 def get_user_syllabi(user_id):
     collection = Db.syllabus

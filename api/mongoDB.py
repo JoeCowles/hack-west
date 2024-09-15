@@ -115,7 +115,7 @@ def check_hashdb(pass_hash: str):
 def getsyllabus(mark):
     sylabus = Db.syllabus
     return sylabus.find_one({"_id": mark})
-# returns complete lecture file
+# returns complete lecture file (from lessonId)
 def getLecture(mark):
     lecture = Db.syllabus
     return lecture.find_one({"_id": mark})

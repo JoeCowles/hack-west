@@ -55,12 +55,17 @@ const config: Config = {
   			'300%': '300%'
   		},
   		animation: {
-  			shimmer: 'shimmer 2s linear infinite'
+  			shimmer: 'shimmer 2s linear infinite',
+  			'slide-up': 'slideUp 0.5s ease-out'
   		},
   		keyframes: {
   			shimmer: {
   				'0%': { backgroundPosition: '0% 0%' },
   				'100%': { backgroundPosition: '100% 100%' },
+  			},
+  			slideUp: {
+  				'0%': { transform: 'translateY(100%)' },
+  				'100%': { transform: 'translateY(0)' },
   			}
   		},
   		borderRadius: {

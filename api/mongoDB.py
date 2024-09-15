@@ -10,7 +10,6 @@ load_dotenv()
 dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers = ['8.8.8.8', '8.8.4.4']  # Google's DNS servers
 
-
 mongoPassword = os.getenv("PUBLIC_MONGODB_PWD")
 MongoAPI = os.getenv("MongoAPI")
 ApiKey = MongoAPI
@@ -134,8 +133,6 @@ def getAnswers(clusterFile):
     return clusterFile["answers"]
 def getQuestionTXT(clusterFile):
     return clusterFile["Questions"]
-def getTitles():
-    return 2
 def getsylabi(user_id):
     collection = Db.Users
     data = collection.find_one({"_id": user_id})

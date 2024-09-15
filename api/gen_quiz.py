@@ -29,5 +29,8 @@ def create_quiz(transcript: str):
     msg = chat_session.send_message(transcript).text
     print ('\n\nQUIZ RESULT: ', msg.replace('\n', ' '))
     # Parse the message to JSON. Remove the outer ```JSON tags
+    # Encode and decode to remove any non-utf-8 characters
+    json_msg = msg.encode('utf-8', 'ignore').decode('utf-8')
     json_msg = msg.strip("```json").strip("```JSON").strip("```")
+
     return json.loads(json_msg)

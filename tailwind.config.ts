@@ -55,16 +55,12 @@ const config: Config = {
   			'300%': '300%'
   		},
   		animation: {
-  			shimmer: 'shimmer 3s ease-in-out infinite'
+  			shimmer: 'shimmer 2s linear infinite'
   		},
   		keyframes: {
   			shimmer: {
-  				'0%, 100%': {
-  					backgroundPosition: 'left center'
-  				},
-  				'50%': {
-  					backgroundPosition: 'right center'
-  				}
+  				'0%': { backgroundPosition: '0% 0%' },
+  				'100%': { backgroundPosition: '100% 100%' },
   			}
   		},
   		borderRadius: {

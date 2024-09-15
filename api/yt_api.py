@@ -35,17 +35,22 @@ def id_from_url(url: str) -> str:
     return None
 
 def get_transcript(video_id: str, topic: str):
-    transcript_dict_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(
-        video_id
-    )
-    transcript_list = [d["text"] for d in transcript_dict_list]
-    transcript = ""
-    for line in transcript_list:
-        transcript += line + " "
-    # If the transcript is empty, return the topic, the ai will generate a quiz based on the topic
-    if transcript == "":
+    try:
+        transcript_dict_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(
+            video_id
+        )
+        transcript_list = [d["text"] for d in transcript_dict_list]
+        transcript = ""
+        for line in transcript_list:
+            transcript += line + " "
+        # If the transcript is empty, return the topic, the ai will generate a quiz based on the topic
+        if transcript == "":
+            return topic
+        return transcript
+    except Exception as e:
+        print(e)
         return topic
-    return transcript
+    
 
 
 async def create_lesson_plan(syllabus):
@@ -58,8 +63,6 @@ async def create_lesson_plan(syllabus):
             id['topic'] = lesson['topic']
         else:
             continue
-        # Replace the problematic print statement with this:
-        print()
         # Ensure proper JSON serialization
         id = json.dumps(id, ensure_ascii=False)
         # Parse the id back to JSON

@@ -149,9 +149,9 @@ def getQuestionTXT(clusterFile):
     return clusterFile["Questions"]
 # returns contents of title feild (string)
 def getsylabi(user_id):
-    collection = Db.users
+    collection = Db.Users
     data = collection.find_one({"_id": user_id})
-    return data["Sylabus"]
+    return data["syllabus"]
 
 
 #adding data
@@ -165,3 +165,26 @@ def getsylabi(user_id):
 
 
 #signupdb("rich.com", "pass")
+
+def get_user_syllabi(user_id):
+    collection = Db.syllabus
+    syllabi = list(collection.find({"foreign_key": user_id}))
+    return syllabi
+
+def get_syllabus_lessons(syllabus_id):
+    syllabus = Db.syllabus.find_one({"_id": ObjectId(syllabus_id)})
+    if syllabus:
+        lesson_ids = syllabus.get("lessons", [])
+        lessons = list(Db.lecture.find({"_id": {"$in": lesson_ids}}))
+        return lessons
+    return []
+
+def get_lesson_quiz_questions(lesson_id):
+    lesson = Db.lecture.find_one({"_id": ObjectId(lesson_id)})
+    if lesson:
+        quiz_ids = lesson.get("quiz", [])
+        quizzes = list(Db.quiz.find({"_id": {"$in": quiz_ids}}))
+        question_ids = [question_id for quiz in quizzes for question_id in quiz.get("questions", [])]
+        questions = list(Db.questions.find({"_id": {"$in": question_ids}}))
+        return questions
+    return []

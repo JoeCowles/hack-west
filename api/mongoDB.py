@@ -26,7 +26,7 @@ def signupdb(email: str, pass_hash: str):
     # return the status of the signup
     collection = Db.users
 
-    data1 = {"email": email, "password": pass_hash, "syllabus": ["66e612b0be15b4f04847bc09"]}
+    data1 = {"email": email, "password": pass_hash, "syllabus": []}
     print(data1)
     insert_result = collection.insert_one(data1)
     user_id = str(insert_result.inserted_id)
@@ -78,7 +78,8 @@ def mkQuizdb(lecture_id: str):
     collection = Db.quiz
     data = {
         "foreign_key": lecture_id,
-        "questions": []
+        "questions": [],
+        "score": 0.0
     }
     quiz = collection.insert_one(data)
     quizId = quiz.inserted_id
@@ -127,7 +128,18 @@ def getQuiz(mark):
 def getQuestion(mark):
     question = Db.syllabus
     return question.find_one({"_id": mark})
-
+#returns the score stored in quiz file (float)
+def getScore(mark):
+    quiz = Db.quiz
+    quizCluster = quiz.find_one({"_id": mark})
+    return quizCluster["score"]
+def updateScore(mark, grade):
+    quiz = Db.quiz
+    quiz.update_one(
+        {"_id": mark},
+        {"score": grade}
+    )
+    return 0
 #get part of file
 # returns id field of file passed (bson object)
 def getId(clusterFile):

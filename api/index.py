@@ -78,7 +78,7 @@ async def create_course(prompt: str, user_id: str):
         lesson['quiz_id'] = quiz_id
 
     for lesson in lessons:
-        transcript = yt_api.get_transcript(lesson['video_id'])
+        transcript = yt_api.get_transcript(lesson['video_id'], lesson['topic'])
         lesson['transcript'] = transcript
         print("Transcript: ", transcript[:100])
         quiz = create_quiz(transcript)

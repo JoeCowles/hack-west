@@ -33,7 +33,7 @@ def id_from_url(url: str) -> str:
     # If the URL does not match a YouTube video format
     return None
 
-def get_transcript(video_id: str):
+def get_transcript(video_id: str, topic: str):
     transcript_dict_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(
         video_id
     )
@@ -41,6 +41,9 @@ def get_transcript(video_id: str):
     transcript = ""
     for line in transcript_list:
         transcript += line + " "
+    # If the transcript is empty, return the topic, the ai will generate a quiz based on the topic
+    if transcript == "":
+        return topic
     return transcript
 
 

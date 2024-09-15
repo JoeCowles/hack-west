@@ -1,14 +1,22 @@
 import React from 'react'
 import Link from 'next/link'
-import getUser from '../hooks/getUser'
+import { getUser } from '../hooks/getUser'
 
-const Sidebar = () => {
-  const { userId, username } = getUser()
+// props for sidebar
+interface Topic {
+  id : string;
+  topic : string;
+}
+interface SidebarProps {
+  username: string;
+  topics: Topic[];
+}
 
+const Sidebar = ({ username, topics }: SidebarProps) => {
   return (
     <aside className="w-64 bg-black p-6 text-white animate-slideInFromLeft">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-red-500 mb-4">{username}</h2>
+        <h2 className="text-lg font-bold text-red-500 mb-4">{username}</h2>
       </div>
       <nav>
         <h3 className="font-bold mb-4 text-lg text-gray-300">Courses</h3>

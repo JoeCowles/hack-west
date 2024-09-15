@@ -8,15 +8,20 @@ import { btoa } from 'buffer';
 const api_url = process.env.NEXT_PUBLIC_API_URL;
 
 
-export default function getUser() {
+export function getUser() {
+
+  
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+
   const router = useRouter();
 
   useEffect(() => {
     const storedUserId = Cookies.get('user_id');
-    if (storedUserId) {
+    const storedUsername = Cookies.get('username');
+    if (storedUserId && storedUsername) {
       setUserId(storedUserId);
+      setUsername(storedUsername);
     } else {
       router.push('/login');
     }
@@ -32,7 +37,9 @@ export default function getUser() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        console.log("Setting user id and username");
+        console.log(data.user_id);
+        console.log(email);
         setUserId(data.user_id);
         setUsername(email);
         Cookies.set('user_id', data.user_id, { expires: 7 }); // Expires in 7 days

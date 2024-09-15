@@ -4,6 +4,7 @@ from .video_search import search_videos
 import os
 from dotenv import load_dotenv
 from urllib.parse import urlparse, parse_qs
+import json
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -53,13 +54,15 @@ async def create_lesson_plan(syllabus):
         print(type(lesson["topic"]))
         print(lesson["topic"])
         id = await search_videos(lesson["topic"])
-        # Add topic field to id
         if id:
             id['topic'] = lesson['topic']
         else:
             continue
-        # encode and decode to remove any non-utf-8 characters
-        id['topic'] = id['topic'].encode('utf-8', 'ignore').decode('utf-8')
-        print(id)
+        # Replace the problematic print statement with this:
+        print()
+        # Ensure proper JSON serialization
+        id = json.dumps(id, ensure_ascii=False)
+        # Parse the id back to JSON
+        id = json.loads(id)
         video_ids.append(id)
     return video_ids

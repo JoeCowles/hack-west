@@ -82,7 +82,7 @@ async def create_course(prompt: str, user_id: str):
         lesson['transcript'] = transcript
         print("Transcript: ", transcript[:100])
         quiz = create_quiz(transcript)
-        while quiz['quiz'] == None:
+        while quiz == None or quiz['quiz'] == None:
             quiz = create_quiz(transcript)
         print("Quiz: ", quiz)
         for question in quiz['quiz']:

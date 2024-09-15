@@ -2,8 +2,10 @@
 import React, { useState } from 'react'
 import { IoSend } from 'react-icons/io5'
 import Cookies from 'js-cookie'
+import { useRouter } from 'next/navigation';
 
 const Chatbar = () => {
+  const router = useRouter();
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -20,7 +22,9 @@ const Chatbar = () => {
       // Here you would typically make your actual API call
       const response = await fetch(`${apiUrl}/create-course?prompt=${input}&user_id=${userId}`, { method: 'POST'});
       if (!response.ok) throw new Error('Failed to send message');
-
+      const data = await response.json();
+      console.log(data);
+      router.push(`/courses/${data.syllabus_id}`);
       setInput('');
     } catch (error) {
       console.error('Error sending message:', error);

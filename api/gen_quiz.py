@@ -7,6 +7,25 @@ load_dotenv()
 
 genai.configure(api_key=os.environ["GoogleAPI_PWD"])
 
+safe = [
+        {
+            "category": "HARM_CATEGORY_HARASSMENT",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_HATE_SPEECH",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+            "threshold": "BLOCK_NONE",
+        },
+    ]
+
 # Create the model
 generation_config = {
     "temperature": 0.1,
@@ -19,6 +38,7 @@ generation_config = {
 model = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
     generation_config=generation_config,
+    safety_settings=safe,
     system_instruction='You are a bot created to create quizzes based on a transcript of a video about a topic. You will be provided with the entirety of the transcript. Your job is to identify the most important key points of the transcript in order to make both true/false and multiple choice quiz questions. Your output should look like this JSON format:\n{"quiz": [{"type": "multiple-choice","question": "This is where the question goes","choices": ["This is where option A goes","This is where option B goes","This is where option C goes","This is where option D goes"],"correct-answer": "This is where the index (from 0-3) of the correct answer choice goes"}, {"type": "true-false","question": "This is where the question goes","answer": "Put either True or False here depending on the answer"}]}\n\nThere should be between 1-3 multiple choice question objects and between 1-3 true/false question objects. The number of questions should add up to 15. The questions should be be able to be answered based only on the information provided in the transcript. If there isn\'t a transcript, then just make a short general quiz based on the topic provided. Keep the total number of questions under 5!\n',
 )
 

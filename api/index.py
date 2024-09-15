@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import yt_api
 from fastapi import BackgroundTasks
 from .mongoDB import logindb, check_hashdb, signupdb, mkSyllabusdb, mkLecturedb, mkQuizdb, mkQuestiondb, get_user_syllabi, get_syllabus_lessons, get_lesson_quiz_questions
+import multiprocessing
+import asyncio
 
 
 
@@ -71,7 +73,6 @@ async def create_course(prompt: str, user_id: str, background_tasks: BackgroundT
     syllabus_id = mkSyllabusdb(syllabus['topic'], syllabus['desc'], user_id)
     print(syllabus_id)
     lessons = await yt_api.create_lesson_plan(syllabus)
-    print(str(lessons))
     for lesson in lessons:
         # Get the video id from the link
         if len(lesson['link'].split("v=")) > 1:
@@ -81,7 +82,6 @@ async def create_course(prompt: str, user_id: str, background_tasks: BackgroundT
 
         video_id = video_id.replace("https://www.youtube.com/watch?v=", "")
         # Create the lecture 
-        print(lesson)
         print(lesson['topic'], video_id, syllabus_id) 
         lesson['id'] = mkLecturedb(lesson['topic'], video_id, syllabus_id)
         lesson['video_id'] = video_id
@@ -90,11 +90,19 @@ async def create_course(prompt: str, user_id: str, background_tasks: BackgroundT
     for lesson in lessons:
         quiz_id = mkQuizdb(lesson['id'])
         lesson['quiz_id'] = quiz_id
-        background_tasks.add_task(generate_quiz_background, lesson)
+        background_tasks.add_task(create_multiprocess_quiz, lesson)
 
-    print(syllabus_id)
+    print("Syllabus ID: ", str(syllabus_id))
     # Next, Create the lessons.
     return {"syllabus_id": str(syllabus_id)}
+
+async def create_multiprocess_quiz(lesson):
+    # Create a process to create quizes while the api is still running
+    process = multiprocessing.Process(target=run_async, args=(lesson,))
+    process.start()
+
+def run_async(lesson):
+    asyncio.run(generate_quiz_background(lesson))
 
 async def generate_quiz_background(lesson):
     transcript = yt_api.get_transcript(lesson['video_id'], lesson['topic'])

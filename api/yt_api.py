@@ -3,6 +3,7 @@ import youtube_transcript_api
 from .video_search import search_videos
 import os
 from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qs
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -15,6 +16,22 @@ youtube = googleapiclient.discovery.build(
     api_service_name, api_version, developerKey=DEVELOPER_KEY
 )
 
+def id_from_url(url: str) -> str:
+    # Parse the URL
+    parsed_url = urlparse(url)
+    
+    # If the video ID is in the query parameters (common case)
+    if parsed_url.hostname in ['www.youtube.com', 'youtube.com']:
+        video_id = parse_qs(parsed_url.query).get('v')
+        if video_id:
+            return video_id[0]
+    
+    # If the video ID is in the path (shortened URL case)
+    elif parsed_url.hostname in ['youtu.be']:
+        return parsed_url.path[1:]
+    
+    # If the URL does not match a YouTube video format
+    return None
 
 def get_transcript(video_id: str):
     transcript_dict_list = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(

@@ -33,6 +33,11 @@ async def create_lesson_plan(syllabus):
         print(type(lesson["topic"]))
         print(lesson["topic"])
         id = await search_videos(lesson["topic"])
+        # Add topic field to id
+        if id:
+            id['topic'] = lesson['topic']
+        else:
+            continue
         print(id)
         video_ids.append(id)
     return video_ids

@@ -71,7 +71,7 @@ def mkLecturedb(description: str, video_id: str, syllabus_id):
     lectureId = lecture.inserted_id
     Db.syllabus.update_one(
         {"_id": syllabus_id,},
-        {"$push": {"lectures": lectureId}}
+        {"$push": {"lessons": lectureId}}
     )
     return lectureId
 def mkQuizdb(lecture_id: str):

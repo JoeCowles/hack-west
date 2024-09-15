@@ -58,7 +58,10 @@ async def create_course(prompt: str, user_id: str):
     print(lessons)
     for lesson in lessons:
         # Get the video id from the link
-        video_id = lesson['link'].split("v=")[1]
+        if len(lesson['link'].split("v=")) > 1:
+            video_id = lesson['link'].split("v=")[1]
+        else:
+            video_id = lesson['link']
         # Create the lecture 
         print(lesson)
         print(lesson['topic'], video_id, syllabus_id) 

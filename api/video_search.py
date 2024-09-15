@@ -2,12 +2,11 @@ import asyncio
 import json
 from playwright.async_api import async_playwright
 
-
-async def search_google_for_quora(term, use_firefox=False):
+async def search_google_for_quora(term):
     browser = None
     try:
         async with async_playwright() as p:
-            browser = await (p.chromium if (not use_firefox) else p.firefox).launch(
+            browser = await p.firefox.launch(
                 args=[
                     "--no-sandbox",
                     "--disable-setuid-sandbox",
@@ -29,7 +28,7 @@ async def search_google_for_quora(term, use_firefox=False):
             await page.wait_for_selector("div.g")
 
             results = await page.evaluate(
-                """
+            """
                 () => Array.from(document.querySelectorAll('div.g')).slice(0, 15).map(result => {
                     const titleElement = result.querySelector('h3');
                     const linkElement = result.querySelector('a');
@@ -42,20 +41,16 @@ async def search_google_for_quora(term, use_firefox=False):
                 }).filter(result => result.link.includes('youtube.com'))
             """
             )
-            print(results)
+            #print(results)
             return results
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        if use_firefox:
-            return []
-        else:
-            return await search_google_for_quora(term, True)
+        return []
 
     finally:
         if browser:
             await browser.close()
-
 
 async def search_videos(term):
     results = await search_google_for_quora(term)

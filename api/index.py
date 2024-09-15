@@ -9,7 +9,8 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from . import yt_api
 
-from .mongoDB import logindb, check_hashdb, signupdb
+from .mongoDB import logindb, check_hashdb, signupdb, mkSyllabusdb, mkLecturedb
+
 
 DEFAULT_LANG = "en-us"
 
@@ -47,13 +48,30 @@ def login(email: str, pass_hash: str):
 
 
 @app.post("/create-course")
-async def create_course(prompt: str, user_id=Depends(check_hash)):
+async def create_course(prompt: str, user_id: str):
+    print(prompt)
     syllabus = create_syllabus(prompt)
-    lessons = await yt_api.create_lesson_plan(syllabus)
-
     print(syllabus)
+    syllabus_id = mkSyllabusdb(syllabus['topic'], syllabus['desc'], user_id)
+    print(syllabus_id)
+    lessons = await yt_api.create_lesson_plan(syllabus)
+    print(lessons)
+    for lesson in lessons:
+        # Get the video id from the link
+        video_id = lesson.link.split("v=")[1]
+        # Create the lecture 
+        mkLecturedb(lesson.desc, video_id, syllabus_id)
+
+    #for lesson in lessons:
+        #transcript = await yt_api.get_transcript(lesson.link)
+        #lesson.transcript = transcript
+        # Description, Syllabus_id, video_id    
+
+    #print(syllabus)
     # Next, Create the lessons.
-    return ""
+    return {"syllabus_id": syllabus_id}
+
+
 
 
 @app.get("/get-courses")

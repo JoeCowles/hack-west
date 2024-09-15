@@ -40,7 +40,7 @@ def logindb(email: str, pass_hash: str):
         user = collection.find_one({"email": email})
         if user["password"] == pass_hash:
             # Return good if the login is successful
-            return {"user_id": str(user["_id"]), "status": "good"}
+            return {"user_id": user["_id"], "status": "good"}
 
     # return bad if the login is unsuccessful
     return {"status": "bad"}
@@ -53,7 +53,7 @@ def mkSyllabusdb(topic: str, description: str, user_id):
         "lessons": []
     }
     syb = collection.insert_one(data)
-    sybId = str(syb.inserted_id)
+    sybId = syb.inserted_id
     Db.user.update_one(
         {"_id": user_id,},
         {"$push": {"syllabus": sybId}}
@@ -68,7 +68,7 @@ def mkLecturedb(description: str, video_id: str, syllabus_id):
         "quiz": []
     }
     lecture = collection.insert_one(data)
-    lectureId = str(lecture.inserted_id)
+    lectureId = lecture.inserted_id
     Db.syllabus.update_one(
         {"_id": syllabus_id,},
         {"$push": {"lectures": lectureId}}
@@ -81,7 +81,7 @@ def mkQuizdb(lecture_id: str):
         "questions": []
     }
     quiz = collection.insert_one(data)
-    quizId = str(quiz.inserted_id)
+    quizId = quiz.inserted_id
     Db.lecture.update_one(
         {"_id": lecture_id,},
         {"$push": {"quiz": quizId}}
@@ -95,8 +95,8 @@ def mkQuestionb(quiz_id: str, questions: str, answers):
         "answers": answers
     }
     question = collection.insert_one(data)
-    questionId = str(question.inserted_id)
-    Db.quiz.update_one(
+    questionId = question.inserted_id
+    Db.quiz.update_one( 
         {"_id": quiz_id,},
         {"$push": {"questions": questionId}}
     )
